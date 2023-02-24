@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "ical": "^0.8.0",
+    "ical-generator": "^3.6.1",
     "xlsx": "^0.18.5"
   },
   "name": "excel-to-ics",
