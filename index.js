@@ -1,6 +1,8 @@
 const XLSX = require('xlsx');
 const ical = require('ical-generator');
 const fs = require('fs')
+const moment = require('moment-timezone');
+
 
 // import file
 const workbook = XLSX.readFile('./excel-files/one-month-template.xlsx')
@@ -18,27 +20,59 @@ const data = XLSX.utils.sheet_to_json(sheet);
 const firstRowFirstCell = sheet['B3'];
 console.log(firstRowFirstCell);
 
+const month = sheet['C2']
+console.log(month);
+
 // Accessing a row
 const thirdRow = data[3];
-console.log(thirdRow);
+// console.log(thirdRow);
 
 // date in number
 const dayNum = data[2];
-console.log(dayNum);
+// console.log(dayNum);
 // date in day
-const dayDate = data[1];
-console.log(dayDate);
+const dayDate = data[1]; // not needed
+// console.log(dayDate);
 
-// separate file into sheets
 
-// seperate file into users
+// find way to combine dayNum and dayDate in a way that can be read by ical
+function generateTaskArray(obj1, obj2) {
+    const result = [];
+    for (const key in obj1) {
+        if (obj2.hasOwnProperty(key)) {
+            result.push([obj2[key], obj1[key]]);
+        }
+    }
+    return result;
+}
 
-// collate users
+const taskArray = generateTaskArray(thirdRow, dayNum);
+console.log(taskArray);
 
-// convert into format for ical
+function convertToICAL(month, tasks) {
+    const ical = require('ical-generator')({
+        domain: 'example.com',
+        prodId: '//SuperCool App//iCal Generator//EN',
+        timezone: 'Europe/London'
+    });
 
-// ical for each user
+    const monthNum = new Date(`1 ${month}`).getMonth() + 1;
+    console.log(monthNum)
+    tasks.forEach(task => {
+        console.log('task log: ' + tasks);
+        const event = ical.createEvent({
+            start: new Date(`2022-${monthNum}-${task[0]}T08:30:00`),
+            end: new Date(`2022-${monthNum}-${task[0]}T16:30:00`),
+            timezone: 'Europe/London',
+            summary: task[1],
+            description: task[1],
+            location: 'London'
+        });
+    });
 
-// use writeFile to make .ics
+    return ical.toString();
+}
 
-// test
+// Generate the iCal file contents and write to disk
+const iCalData = convertToICAL('April', taskArray)
+// fs.writeFileSync('my-calendar.ics', iCalData);
