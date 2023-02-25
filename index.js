@@ -10,21 +10,24 @@ const workbook = XLSX.readFile('./excel-files/one-month-template.xlsx')
 // console.log(sheets);
 // console.log(workbook.SheetNames)
 
-const sheets = workbook.SheetNames[0]
+const sheet = workbook.Sheets[workbook.SheetNames[0]]
 
 const data = XLSX.utils.sheet_to_json(sheet);
 
 // Accessing a cell
-const firstRowFirstCell = sheet['A1'];
+const firstRowFirstCell = sheet['B3'];
 console.log(firstRowFirstCell);
 
 // Accessing a row
-const firstRow = data[0];
-console.log(firstRow);
+const thirdRow = data[3];
+console.log(thirdRow);
 
-// Accessing a column
-const columnA = data.map(row => row.A);
-console.log(columnA);
+// date in number
+const dayNum = data[2];
+console.log(dayNum);
+// date in day
+const dayDate = data[1];
+console.log(dayDate);
 
 // separate file into sheets
 
