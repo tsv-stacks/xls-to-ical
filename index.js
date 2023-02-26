@@ -152,3 +152,19 @@ function shiftCheck(tasktype) {
 }
 
 // end of month check
+function checkEndOfMonth(event, currentMonth) {
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const eventEndMonth = monthNames[new Date(event.end).getMonth()];
+
+    if (eventEndMonth !== currentMonth) {
+        // Event ends in the following month, adjust end date to the last day of the current month at 4:30pm
+        const currentMonthNumDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+
+        event.end = new Date(new Date().getFullYear(), new Date().getMonth(), currentMonthNumDays, 16, 30, 0);
+
+        return event;
+    }
+
+    return event;
+}
