@@ -14,3 +14,15 @@ In the iCal file, the timezone can be specified using the "TZID" property. For e
 - ical for each user
 - use writeFile to make .ics
 - test
+
+## Future TO-DO / Coming Soon
+
+- [ ] clean up code
+- [ ] stress test
+- [ ] merge for multiple months
+- [ ] convert code to class constructor
+- [ ] possible integration into excel?
+- [ ] migration to browser?
+- [ ] push to arrays as temp storage
+- [ ] scale up
+- [ ]

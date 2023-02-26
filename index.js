@@ -1,5 +1,5 @@
 const XLSX = require('xlsx');
-const ical = require('ical-generator');
+// const ical = require('ical-generator');
 const fs = require('fs')
 const moment = require('moment-timezone');
 
@@ -49,6 +49,7 @@ function generateTaskArray(obj1, obj2) {
 const taskArray = generateTaskArray(thirdRow, dayNum);
 console.log(taskArray);
 
+
 function convertToICAL(month, tasks) {
     const ical = require('ical-generator')({
         domain: 'example.com',
@@ -56,23 +57,70 @@ function convertToICAL(month, tasks) {
         timezone: 'Europe/London'
     });
 
-    const monthNum = new Date(`1 ${month}`).getMonth() + 1;
-    console.log(monthNum)
+    let monthNum = new Date(`1 ${month}`).getMonth() + 1;
+    if (isNaN(monthNum)) {
+        throw new Error(`Invalid month: ${month}`);
+    }
+
+    const events = [];
+    // console.log(monthNum, tasks[0])
     tasks.forEach(task => {
-        console.log('task log: ' + tasks);
+        if (isNaN(task[0])) {
+            throw new Error(`Invalid task date: ${task[0]}`);
+        }
+        monthNum = fDateValue(monthNum)
+        task[0] = fDateValue(task[0])
+        // console.log(monthNum, tasks[0])
         const event = ical.createEvent({
-            start: new Date(`2022-${monthNum}-${task[0]}T08:30:00`),
-            end: new Date(`2022-${monthNum}-${task[0]}T16:30:00`),
+            start: new Date(`2023-${monthNum}-${task[0]}T08:30:00`),
+            end: new Date(`2023-${monthNum}-${task[0]}T16:30:00`),
             timezone: 'Europe/London',
-            summary: task[1],
-            description: task[1],
-            location: 'London'
+            summary: getSummary(task[1]),
+            description: getSummary(task[1]),
+            location: 'STC'
         });
+        events.push(event);
     });
 
-    return ical.toString();
+    return events;
 }
 
 // Generate the iCal file contents and write to disk
-const iCalData = convertToICAL('April', taskArray)
-// fs.writeFileSync('my-calendar.ics', iCalData);
+const events = convertToICAL('december', taskArray);
+events.forEach(event => {
+    console.log(event.toString());
+    // fs.writeFileSync('my-calendar.ics', event.toString());
+});
+
+function fDateValue(value) {
+    if (value >= 10) {
+        return value.toString()
+    }
+    return value.toString().padStart(2, '0');
+}
+
+function getSummary(taskType) {
+    if (taskType === 'SS') {
+        return 'Standby Support';
+    } else if (taskType === 'DM') {
+        return 'Duty Manager';
+    } else if (taskType === 'D') {
+        return 'On Duty';
+    } else if (taskType === 'S') {
+        return 'On Standby';
+    } else if (taskType === 'W') {
+        return 'Weekend';
+    } else if (taskType === 'F') {
+        return 'Flex';
+    } else if (taskType === 'BHS') {
+        return 'Bank Holiday Standby';
+    } else if (taskType === 'BHSS') {
+        return 'Bank Holiday Standby Support';
+    } else if (taskType === 'BHD') {
+        return 'Bank Holiday Duty';
+    } else if (taskType === 'BHW') {
+        return 'Bank Holiday Weekend';
+    } else {
+        return taskType
+    }
+}
