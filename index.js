@@ -73,6 +73,10 @@ function convertToICAL(month, tasks) {
         // console.log(monthNum, task[0])
         if (shiftCheck(task[1])) {
             let newDate = fDateValue(Number(task[0]) + 1)
+            if (newDate > daysInMonth[monthNum - 1]) {
+                monthNum++;
+                newDate = '01';
+            }
             // console.log(newDate);
             // way to check SS rolls over into next month
             const event = ical.createEvent({
@@ -95,8 +99,8 @@ function convertToICAL(month, tasks) {
             });
             events.push(event);
         }
-
     });
+
 
     return events;
 }
@@ -152,19 +156,19 @@ function shiftCheck(tasktype) {
 }
 
 // end of month check
-function checkEndOfMonth(event, currentMonth) {
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+// function checkEndOfMonth(event, currentMonth) {
+//     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    const eventEndMonth = monthNames[new Date(event.end).getMonth()];
+//     const eventEndMonth = monthNames[new Date(event.end).getMonth()];
 
-    if (eventEndMonth !== currentMonth) {
-        // Event ends in the following month, adjust end date to the last day of the current month at 4:30pm
-        const currentMonthNumDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+//     if (eventEndMonth !== currentMonth) {
+//         // Event ends in the following month, adjust end date to the last day of the current month at 4:30pm
+//         const currentMonthNumDays = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
-        event.end = new Date(new Date().getFullYear(), new Date().getMonth(), currentMonthNumDays, 16, 30, 0);
+//         event.end = new Date(new Date().getFullYear(), new Date().getMonth(), currentMonthNumDays, 16, 30, 0);
 
-        return event;
-    }
+//         return event;
+//     }
 
-    return event;
-}
+//     return event;
+// }
