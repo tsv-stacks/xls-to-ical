@@ -25,4 +25,4 @@ In the iCal file, the timezone can be specified using the "TZID" property. For e
 - [ ] migration to browser?
 - [ ] push to arrays as temp storage
 - [ ] scale up
-- [ ]
+- [ ] add name to file name

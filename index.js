@@ -70,16 +70,32 @@ function convertToICAL(month, tasks) {
         }
         monthNum = fDateValue(monthNum)
         task[0] = fDateValue(task[0])
-        // console.log(monthNum, tasks[0])
-        const event = ical.createEvent({
-            start: new Date(`2023-${monthNum}-${task[0]}T08:30:00`),
-            end: new Date(`2023-${monthNum}-${task[0]}T16:30:00`),
-            timezone: 'Europe/London',
-            summary: getSummary(task[1]),
-            description: getSummary(task[1]),
-            location: 'STC'
-        });
-        events.push(event);
+        // console.log(monthNum, task[0])
+        if (shiftCheck(task[1])) {
+            let newDate = fDateValue(Number(task[0]) + 1)
+            // console.log(newDate);
+            // way to check SS rolls over into next month
+            const event = ical.createEvent({
+                start: new Date(`2023-${monthNum}-${task[0]}T16:30:00`),
+                end: new Date(`2023-${monthNum}-${newDate}T08:30:00`),
+                timezone: 'Europe/London',
+                summary: getSummary(task[1]),
+                description: getSummary(task[1]),
+                location: 'STC'
+            });
+            events.push(event);
+        } else {
+            const event = ical.createEvent({
+                start: new Date(`2023-${monthNum}-${task[0]}T08:30:00`),
+                end: new Date(`2023-${monthNum}-${task[0]}T16:30:00`),
+                timezone: 'Europe/London',
+                summary: getSummary(task[1]),
+                description: getSummary(task[1]),
+                location: 'STC'
+            });
+            events.push(event);
+        }
+
     });
 
     return events;
@@ -88,7 +104,7 @@ function convertToICAL(month, tasks) {
 // Generate the iCal file contents and write to disk
 const events = convertToICAL('december', taskArray);
 events.forEach(event => {
-    console.log(event.toString());
+    // console.log(event.toString());
     // fs.writeFileSync('my-calendar.ics', event.toString());
 });
 
@@ -124,3 +140,15 @@ function getSummary(taskType) {
         return taskType
     }
 }
+
+
+function shiftCheck(tasktype) {
+    if (tasktype === 'SS' || tasktype === 'S') {
+        return true
+    } else if (tasktype === 'BHS' || tasktype === 'BHSS') {
+        return true
+    }
+    return false
+}
+
+// end of month check
